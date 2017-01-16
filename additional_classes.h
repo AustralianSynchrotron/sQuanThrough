@@ -12,6 +12,7 @@
 #include <QProgressBar>
 #include <QCheckBox>
 #include <QStyledItemDelegate>
+#include <qtpv.h>
 
 #ifndef CTGUIADDITIONALCLASSES
 #define CTGUIADDITIONALCLASSES
@@ -161,6 +162,7 @@ private slots:
   void evaluate();
   void onState(QProcess::ProcessState state);
   void onStartStop() { if (isRunning()) stop(); else start(); };
+  void updateShutter();
 
 signals:
   void editingFinished();
@@ -217,6 +219,161 @@ protected:
   virtual void keyPressEvent(QKeyEvent * event);
 };
 
+
+
+class Shutter : public QObject {
+
+  Q_OBJECT;
+  enum KnownShutters {
+    CUSTOM=0,
+    Beamline,
+    MRT,
+    Imaging
+  };
+  static QString shutterName(KnownShutters shut) {
+    switch (shut) {
+      case Beamline: return "Beamline";
+      case MRT:      return "MRT in 2A";
+      case Imaging:  return "Imaging";
+      default:       return "";
+    }
+  }
+
+  static KnownShutters shutterName(const QString & shut) {
+    if (shut == "Beamline")  return Beamline;
+    if (shut == "MRT in 2A") return MRT;
+    if (shut == "Imaging")   return Imaging;
+    return CUSTOM;
+  }
+
+  KnownShutters inCharge;
+
+  QEpicsPv * openPv;
+  QEpicsPv * closePv;
+  QEpicsPv * openStatPv;
+  QEpicsPv * closedStatPv;
+
+  QHash < QEpicsPv ** , QVariant > pvs;
+
+public:
+
+  Shutter(QObject * parent = 0, KnownShutters inCh = KnownShutters::CUSTOM )
+    : QObject(parent)
+    , inCharge(inCh)
+    , openPv(0)
+    , closePv(0)
+    , openStatPv(0)
+    , closedStatPv(0)
+  {
+    setShutter(inCh);
+  }
+
+  bool isOpened() { return isAvailable() &&
+                           openStatPv->get().toString() == pvs[&openStatPv] ; }
+
+  bool isAvailable() { return
+        openPv && openPv->isConnected() &&
+        closePv && closePv->isConnected() &&
+        openStatPv && openStatPv->isConnected() &&
+        closedStatPv && closedStatPv->isConnected() ; }
+
+public slots:
+
+  void setShutter(KnownShutters shut) {
+
+    switch (shut) {
+      case Beamline:
+        setShutter( QList <QPair <QString, QVariant> > ()
+                    << QPair<QString,QVariant>("SR08ID01PSS01:HU01A_BL_SHUTTER_OPEN_CMD", 1)
+                    << QPair<QString,QVariant>("SR08ID01PSS01:HU01A_BL_SHUTTER_CLOSE_CMD", 1)
+                    << QPair<QString,QVariant>("SR08ID01PSS01:HU01A_SF_SHUTTER_OPEN_STS", 1)
+                    << QPair<QString,QVariant>("SR08ID01PSS01:HU01A_SF_SHUTTER_CLOSE_STS", 1)  );
+        break;
+      case MRT:
+        setShutter( QList <QPair <QString, QVariant> > ()
+                    << QPair<QString,QVariant>("SR08ID01MRT01:SHUTTEROPEN_CMD", "Open")
+                    << QPair<QString,QVariant>("", "Close")
+                    << QPair<QString,QVariant>("SR08ID01MRT01:SHUTTEROPEN_MONITOR", "Opened")
+                    << QPair<QString,QVariant>("", "Closed") );
+        break;
+      case Imaging:
+        setShutter( QList <QPair <QString, QVariant> > ()
+                    << QPair<QString,QVariant>("SR08ID01IS01:SHUTTEROPEN_CMD", "Open")
+                    << QPair<QString,QVariant>("", "Close")
+                    << QPair<QString,QVariant>("SR08ID01IS01:SHUTTEROPEN_MONITOR", "Opened")
+                    << QPair<QString,QVariant>("", "Closed")  );
+      default:
+        pvs.clear();
+        break;
+    }
+
+    inCharge=shut;
+
+  }
+
+  void setShutter( const QList <QPair <QString, QVariant> > & pvlst ) {
+
+    pvs.clear();
+    inCharge=CUSTOM;
+
+    if (pvlst.size() != 4) {
+      qDebug() << "Unknown format for the custom shutter.";
+      return;
+    }
+
+
+    if (openPv) delete openPv;
+    openPv = new QEpicsPv(pvlst[0].first, this);
+    pvs[&openPv]=pvlst[0].second;
+    connect(openPv, SIGNAL(connectionUpdated(bool)), SIGNAL(connectionUpdated()));
+
+    if (closePv) delete closePv;
+    closePv = pvlst[1].first.isEmpty() || pvlst[1].first == pvlst[0].first
+        ? openPv : new QEpicsPv(pvlst[1].first, this);
+    pvs[&closePv]=pvlst[1].second;
+    connect(closePv, SIGNAL(connectionUpdated(bool)), SIGNAL(connectionUpdated()));
+
+    if (openStatPv) delete openStatPv;
+    openStatPv = new QEpicsPv(pvlst[2].first, this);
+    pvs[&openStatPv]=pvlst[2].second;
+    connect(openStatPv, SIGNAL(connectionUpdated(bool)), SIGNAL(connectionUpdated()));
+    connect(openStatPv, SIGNAL(valueUpdated(QVariant)), SIGNAL(stateUpdated()));
+    connect(openStatPv, SIGNAL(valueUpdated(QVariant)), SIGNAL(stateUpdated()));
+
+    if (closedStatPv) delete closedStatPv;
+    closedStatPv = pvlst[3].first.isEmpty() || pvlst[3].first == pvlst[2].first
+        ? openStatPv : new QEpicsPv(pvlst[3].first, this);
+    pvs[&closedStatPv]=pvlst[3].second;
+    connect(closedStatPv, SIGNAL(connectionUpdated(bool)), SIGNAL(connectionUpdated()));
+    connect(closedStatPv, SIGNAL(valueUpdated(QVariant)), SIGNAL(stateUpdated()));
+
+  }
+
+  void open(bool waitcompletion=true) {
+    if (!isAvailable())
+      return;
+    openPv->set(pvs[&openPv]);
+    if (waitcompletion && ! isOpened() )
+      qtWait(openStatPv, SIGNAL(valueUpdated(QVariant)), 2000);
+  }
+
+  void close(bool waitcompletion=true) {
+    if (!isAvailable())
+      return;
+    closePv->set(pvs[&closePv]);
+    if (waitcompletion && isOpened() )
+      qtWait(closedStatPv, SIGNAL(valueUpdated(QVariant)), 2000);
+  }
+
+signals:
+
+  void stateUpdated();
+  openStatUpdated(QVariant);
+  closedStatUpdated(QVariant);
+  void connectionUpdated();
+
+
+};
 
 
 #endif // CTGUIADDITIONALCLASSES

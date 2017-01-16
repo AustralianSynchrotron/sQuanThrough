@@ -47,9 +47,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->browseExpPath, SIGNAL(clicked()), SLOT(onWorkingDirBrowse()));
     connect(ui->expPath, SIGNAL(editingFinished()), SLOT(onParameterChange()));
 
-    connect(ui->startStop, SIGNAL(clicked()), SLOT(onStartStop()));
+    connect(ui->shutterSelection, SIGNAL(currentIndexChanged(int)), SLOT(updataShutter()));
 
-    loadConfiguration(storedState);
+    connect(ui->startStop, SIGNAL(clicked()), SLOT(onStartStop()));
 
     connect( scanMotor->motor(), SIGNAL(changedUserPosition(double)), ui->scanCurrent, SLOT(setValue(double)) );
     connect( stepMotor->motor(), SIGNAL(changedUserPosition(double)), ui->stepCurrent, SLOT(setValue(double)) );
@@ -79,6 +79,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect( ui->postScanScript, SIGNAL(editingFinished()), SLOT(onParameterChange()));
     connect( ui->preStepScript, SIGNAL(editingFinished()), SLOT(onParameterChange()));
     connect( ui->postStepScript, SIGNAL(editingFinished()), SLOT(onParameterChange()));
+
+    QTimer::singleShot(0, this, SLOT(loadConfiguration(storedState)));
+    onParameterChange();
 
     updateProgress();
 
@@ -176,6 +179,7 @@ void MainWindow::saveConfiguration(QString fileName) {
     }
     config.endArray();
   }
+  setInConfig(config, "scripting", ui->scripting);
   setInConfig(config, "preexecscript",  ui->preExecScript);
   setInConfig(config, "postexecscript",  ui->postExecScript);
   setInConfig(config, "prescanscript",  ui->preScanScript);
@@ -216,6 +220,7 @@ void MainWindow::loadConfiguration(QString fileName) {
     }
     config.endArray();
   }
+  restoreFromConfig(config, "scripting", ui->scripting);
   restoreFromConfig(config, "preexecscript",  ui->preExecScript);
   restoreFromConfig(config, "postexecscript",  ui->postExecScript);
   restoreFromConfig(config, "prescanscript",  ui->preScanScript);
@@ -314,6 +319,8 @@ void MainWindow::onParameterChange() {
 
     ui->progressBar->setMaximum( ui->scanRepetitions->value() * ui->stepNof->value() );
 
+    updateProgress();
+
 }
 
 
@@ -341,7 +348,24 @@ void MainWindow::check(QWidget * obj, bool status) {
 
 
 
-void MainWindow::onStartStop() {}
+void MainWindow::onStartStop() {
+
+  if (progress>=0) {
+    progress = -1;
+    return;
+  }
+
+  progress = 0;
+
+
+
+
+
+
+
+
+
+}
 
 
 
