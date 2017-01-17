@@ -262,28 +262,12 @@
       </item>
       <item row="0" column="0" colspan="2">
        <layout class="QGridLayout" name="gridLayout_5">
-        <item row="2" column="1">
-         <widget class="QComboBox" name="shutterSelection"/>
-        </item>
-        <item row="2" column="0">
+        <item row="4" column="0">
          <widget class="QLabel" name="label_4">
           <property name="text">
            <string>Shutter</string>
           </property>
          </widget>
-        </item>
-        <item row="0" column="2">
-         <widget class="QPushButton" name="browseExpPath">
-          <property name="toolTip">
-           <string>Browse for the log file</string>
-          </property>
-          <property name="text">
-           <string>Browse</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="expPath"/>
         </item>
         <item row="0" column="0">
          <widget class="QLabel" name="label_14">
@@ -292,105 +276,184 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
+        <item row="2" column="0">
          <widget class="QLabel" name="label_15">
           <property name="text">
            <string>File prefix</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
+        <item row="2" column="1">
          <widget class="QLineEdit" name="prefix"/>
         </item>
-        <item row="3" column="1">
-         <layout class="QGridLayout" name="shutsets">
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="lineEdit"/>
+        <item row="4" column="1">
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QComboBox" name="shutterSelection"/>
           </item>
-          <item row="2" column="1">
-           <widget class="QLineEdit" name="lineEdit_3"/>
-          </item>
-          <item row="1" column="2">
-           <widget class="QLineEdit" name="lineEdit_2"/>
-          </item>
-          <item row="3" column="1">
-           <widget class="QLineEdit" name="lineEdit_6"/>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_17">
+          <item>
+           <widget class="QLabel" name="shutterStatus">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
-             <string>close</string>
+             <string>&lt;status&gt;</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="2">
-           <widget class="QLineEdit" name="lineEdit_4"/>
-          </item>
-          <item row="4" column="1">
-           <widget class="QLineEdit" name="lineEdit_5"/>
-          </item>
-          <item row="4" column="2">
-           <widget class="QLineEdit" name="lineEdit_8"/>
-          </item>
-          <item row="3" column="2">
-           <widget class="QLineEdit" name="lineEdit_7"/>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="label_20">
-            <property name="text">
-             <string>is open</string>
+          <item>
+           <widget class="QPushButton" name="shutterToggle">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_19">
             <property name="text">
-             <string>is closed</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_18">
-            <property name="text">
-             <string>open</string>
+             <string>Toggle</string>
             </property>
            </widget>
           </item>
          </layout>
         </item>
-        <item row="3" column="2">
-         <layout class="QVBoxLayout" name="shuttests">
+        <item row="0" column="1">
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
-           <widget class="QPushButton" name="pushButton">
-            <property name="text">
-             <string>close</string>
-            </property>
-           </widget>
+           <widget class="QLineEdit" name="expPath"/>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_2">
-            <property name="text">
-             <string>open</string>
+           <widget class="QPushButton" name="browseExpPath">
+            <property name="toolTip">
+             <string>Browse for the log file</string>
             </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_21">
             <property name="text">
-             <string>&lt;status&gt;</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_22">
-            <property name="text">
-             <string>&lt;status&gt;</string>
+             <string>Browse</string>
             </property>
            </widget>
           </item>
          </layout>
+        </item>
+        <item row="5" column="1">
+         <widget class="QWidget" name="customShutter" native="true">
+          <layout class="QGridLayout" name="shutsets">
+           <item row="0" column="1">
+            <widget class="QLabel" name="label_21">
+             <property name="text">
+              <string>PV</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_17">
+             <property name="text">
+              <string>close</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="customShutterCloseCmd">
+             <property name="toolTip">
+              <string>PV to close the shutter</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="customShutterOpenCmd">
+             <property name="toolTip">
+              <string>PV to open the shutter (same as close if empty)</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QLineEdit" name="customShutterCloseCmdVal">
+             <property name="toolTip">
+              <string>Value to put into the PV to close the shutter</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QLineEdit" name="customShutterClosedSts">
+             <property name="toolTip">
+              <string>PV to read closed status of the shutter</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QLineEdit" name="customShutterOpenCmdVal">
+             <property name="toolTip">
+              <string>Value to put into the PV to open the shutter</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QLineEdit" name="customShutterOpenSts">
+             <property name="toolTip">
+              <string>PV to read open status of the shutter (same as closed if empty)</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="2">
+            <widget class="QLineEdit" name="customShutterOpenStsVal">
+             <property name="toolTip">
+              <string>Value indicating open status</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="2">
+            <widget class="QLineEdit" name="customShutterClosedStsVal">
+             <property name="toolTip">
+              <string>Value indicating closed status</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_20">
+             <property name="text">
+              <string>is open</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_19">
+             <property name="text">
+              <string>is closed</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_18">
+             <property name="text">
+              <string>open</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QLabel" name="label_22">
+             <property name="text">
+              <string>Value</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </item>
        </layout>
+      </item>
+      <item row="2" column="0">
+       <widget class="QCheckBox" name="scripting">
+        <property name="text">
+         <string>Scripting</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
       <item row="3" column="0" colspan="2">
        <widget class="QFrame" name="scripts_frame">
@@ -401,6 +464,54 @@
          <enum>QFrame::Raised</enum>
         </property>
         <layout class="QGridLayout" name="gridLayout_4">
+         <item row="4" column="0">
+          <widget class="QLabel" name="label_10">
+           <property name="text">
+            <string>Post</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <widget class="QLabel" name="label_8">
+           <property name="text">
+            <string>Post</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" rowspan="2">
+          <widget class="QLabel" name="label_11">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>execution</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_9">
+           <property name="text">
+            <string>Pre</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_6">
+           <property name="text">
+            <string>Post</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string>Pre</string>
+           </property>
+          </widget>
+         </item>
          <item row="3" column="1" rowspan="2">
           <widget class="QLabel" name="label_12">
            <property name="text">
@@ -422,51 +533,12 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="label_10">
-           <property name="text">
-            <string>Post</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label_6">
-           <property name="text">
-            <string>Post</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="0">
-          <widget class="QLabel" name="label_8">
-           <property name="text">
-            <string>Post</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_5">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Pre</string>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="2">
           <widget class="Script" name="preExecScript" native="true"/>
          </item>
          <item row="1" column="2">
-          <widget class="Script" name="postExecScript" native="true"/>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="label_9">
-           <property name="text">
-            <string>Pre</string>
-           </property>
+          <widget class="Script" name="postExecScript" native="true">
+           <zorder>label_5</zorder>
           </widget>
          </item>
          <item row="5" column="0" colspan="3">
@@ -488,8 +560,8 @@
          <item row="7" column="2">
           <widget class="Script" name="postStepScript" native="true"/>
          </item>
-         <item row="0" column="1" rowspan="2">
-          <widget class="QLabel" name="label_11">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_5">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -497,31 +569,11 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>execution</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="0">
-          <widget class="QLabel" name="label_7">
-           <property name="text">
             <string>Pre</string>
            </property>
           </widget>
          </item>
         </layout>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QCheckBox" name="scripting">
-        <property name="text">
-         <string>Scripting</string>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
        </widget>
       </item>
      </layout>
@@ -534,7 +586,7 @@
      <x>0</x>
      <y>0</y>
      <width>1136</width>
-     <height>42</height>
+     <height>34</height>
     </rect>
    </property>
   </widget>

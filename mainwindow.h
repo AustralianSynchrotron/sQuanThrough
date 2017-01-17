@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <qcamotorgui.h>
+#include <additional_classes.h>
 
 namespace Ui {
 class MainWindow;
@@ -24,6 +25,7 @@ private:
     static const QString storedState;
     QCaMotorGUI * scanMotor;
     QCaMotorGUI * stepMotor;
+    Shutter * shut;
 
     QHash <const QWidget*,  bool > preReq;
     void check(QWidget * obj, bool status);
@@ -31,6 +33,7 @@ private:
 private slots:
 
     void updateProgress();
+    void updateShutter();
     void onWorkingDirBrowse();
     void onParameterChange();
     void onStartStop();

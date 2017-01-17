@@ -11,6 +11,9 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
     , progress(-1)
+    , scanMotor(new QCaMotorGUI)
+    , stepMotor(new QCaMotorGUI)
+    , shut(new Shutter)
 {
 
     ui->setupUi(this);
@@ -37,23 +40,24 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->startStop->setText("Start");
 
-    scanMotor = new QCaMotorGUI;
     ui->placeScanMotor->layout()->addWidget(scanMotor->setupButton());
-    stepMotor = new QCaMotorGUI;
     ui->placeStepMotor->layout()->addWidget(stepMotor->setupButton());
+
+    foreach (Shutter::KnownShutters shut, Shutter::allKnownShutters)
+      ui->shutterSelection->addItem(Shutter::shutterName(shut));
+    //ui->shutterSelection->addItem("Custom");
 
     ui->stepPositionsList->setItemDelegate(new NTableDelegate(ui->stepPositionsList));
 
     connect(ui->browseExpPath, SIGNAL(clicked()), SLOT(onWorkingDirBrowse()));
     connect(ui->expPath, SIGNAL(editingFinished()), SLOT(onParameterChange()));
 
-    connect(ui->shutterSelection, SIGNAL(currentIndexChanged(int)), SLOT(updataShutter()));
-
-    connect(ui->startStop, SIGNAL(clicked()), SLOT(onStartStop()));
+    connect( shut, SIGNAL(connectionUpdated()), SLOT(updateShutter()));
+    connect( shut, SIGNAL(stateUpdated()), SLOT(updateShutter()));
+    connect( ui->shutterSelection, SIGNAL(currentIndexChanged(int)), SLOT(onParameterChange()));
 
     connect( scanMotor->motor(), SIGNAL(changedUserPosition(double)), ui->scanCurrent, SLOT(setValue(double)) );
     connect( stepMotor->motor(), SIGNAL(changedUserPosition(double)), ui->stepCurrent, SLOT(setValue(double)) );
-
     connect( scanMotor->motor(), SIGNAL(changedPv(QString)), SLOT(onParameterChange()));
     connect( stepMotor->motor(), SIGNAL(changedPv(QString)), SLOT(onParameterChange()));
     connect( scanMotor->motor(), SIGNAL(changedUserPosition(double)), SLOT(onParameterChange()));
@@ -79,6 +83,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect( ui->postScanScript, SIGNAL(editingFinished()), SLOT(onParameterChange()));
     connect( ui->preStepScript, SIGNAL(editingFinished()), SLOT(onParameterChange()));
     connect( ui->postStepScript, SIGNAL(editingFinished()), SLOT(onParameterChange()));
+
+    connect(ui->startStop, SIGNAL(clicked()), SLOT(onStartStop()));
 
     QTimer::singleShot(0, this, SLOT(loadConfiguration(storedState)));
     onParameterChange();
@@ -161,6 +167,8 @@ void MainWindow::saveConfiguration(QString fileName) {
 
   setInConfig(config, "prefix", ui->prefix);
   setInConfig(config, "path", ui->expPath);
+  setInConfig(config, "shutter", ui->shutterSelection);
+  setInConfig(config, "customShutter", ui->shutterSelection);
   setInConfig(config, "scanmotor", scanMotor);
   setInConfig(config, "scanrepititions", ui->scanRepetitions);
   setInConfig(config, "scandistance", ui->scanDistance);
@@ -202,6 +210,7 @@ void MainWindow::loadConfiguration(QString fileName) {
 
   restoreFromConfig(config, "prefix", ui->prefix);
   restoreFromConfig(config, "path", ui->expPath);
+  restoreFromConfig(config, "shutter", ui->shutterSelection);
   restoreFromConfig(config, "scanmotor", scanMotor);
   restoreFromConfig(config, "scanrepititions", ui->scanRepetitions);
   restoreFromConfig(config, "scandistance", ui->scanDistance);
@@ -319,12 +328,20 @@ void MainWindow::onParameterChange() {
 
     ui->progressBar->setMaximum( ui->scanRepetitions->value() * ui->stepNof->value() );
 
+    ui->customShutter->setVisible( ui->shutterSelection->currentText() == "Custom" );
+    if ( ui->shutterSelection->currentText() != shut->shutterName() )
+      shut->setShutter( Shutter::shutterName( ui->shutterSelection->currentText() ) );
+
     updateProgress();
 
 }
 
 
+void MainWindow::updateShutter() {
 
+
+
+}
 
 
 
