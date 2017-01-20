@@ -26,6 +26,7 @@ private:
     QCaMotorGUI * scanMotor;
     QCaMotorGUI * stepMotor;
     Shutter * shut;
+    QLabel * errorLabel;
 
     QHash <const QWidget*,  bool > preReq;
     void check(QWidget * obj, bool status);

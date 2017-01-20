@@ -506,29 +506,45 @@ void Shutter::setShutter( const QList <QPair <QString, QVariant> > & pvlst ) {
   }
 
 
-  if (openPv) delete openPv;
+  if (openPv) {
+    delete openPv;
+    if (openPv == closePv)
+      closePv=0;
+  }
   openPv = new QEpicsPv(pvlst[0].first, this);
   pvs[&openPv]=pvlst[0].second;
   connect(openPv, SIGNAL(connectionChanged(bool)), SIGNAL(connectionUpdated()));
 
   if (closePv) delete closePv;
-  closePv = pvlst[1].first.isEmpty() || pvlst[1].first == pvlst[0].first
-      ? openPv : new QEpicsPv(pvlst[1].first, this);
+  if ( pvlst[1].first.isEmpty() || pvlst[1].first == pvlst[0].first )
+    closePv = openPv;
+  else {
+    closePv =  new QEpicsPv(pvlst[1].first, this);
+    connect(closePv, SIGNAL(connectionChanged(bool)), SIGNAL(connectionUpdated()));
+  }
   pvs[&closePv]=pvlst[1].second;
-  connect(closePv, SIGNAL(connectionChanged(bool)), SIGNAL(connectionUpdated()));
 
-  if (openStatPv) delete openStatPv;
+  if (openStatPv) {
+    delete openStatPv;
+    if (openStatPv == closedStatPv)
+      closedStatPv=0;
+  }
   openStatPv = new QEpicsPv(pvlst[2].first, this);
   pvs[&openStatPv]=pvlst[2].second;
   connect(openStatPv, SIGNAL(connectionChanged(bool)), SIGNAL(connectionUpdated()));
   connect(openStatPv, SIGNAL(valueUpdated(QVariant)), SIGNAL(stateUpdated()));
 
   if (closedStatPv) delete closedStatPv;
-  closedStatPv = pvlst[3].first.isEmpty() || pvlst[3].first == pvlst[2].first
-      ? openStatPv : new QEpicsPv(pvlst[3].first, this);
+  if ( pvlst[3].first.isEmpty() || pvlst[3].first == pvlst[2].first )
+    closedStatPv = openStatPv;
+  else {
+    closedStatPv = new QEpicsPv(pvlst[3].first, this);
+    connect(closedStatPv, SIGNAL(connectionChanged(bool)), SIGNAL(connectionUpdated()));
+    connect(closedStatPv, SIGNAL(valueUpdated(QVariant)), SIGNAL(stateUpdated()));
+  }
   pvs[&closedStatPv]=pvlst[3].second;
-  connect(closedStatPv, SIGNAL(connectionChanged(bool)), SIGNAL(connectionUpdated()));
-  connect(closedStatPv, SIGNAL(valueUpdated(QVariant)), SIGNAL(stateUpdated()));
+
+  emit connectionUpdated();
 
 }
 
