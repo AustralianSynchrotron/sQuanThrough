@@ -252,7 +252,7 @@ private:
 
 public:
 
-  Shutter(QObject * parent = 0, KnownShutters inCh = KnownShutters::CUSTOM )
+  Shutter(QObject * parent = 0, KnownShutters inCh = CUSTOM )
     : QObject(parent)
     , inCharge(inCh)
     , openPv(0)

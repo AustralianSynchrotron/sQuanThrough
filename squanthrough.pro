@@ -35,3 +35,8 @@ LIBS += -lqtpv \
 #    -lshutter1A \
 #    -lcomponent
 
+
+target.files = $$[TARGET]
+target.path = $$[INSTALLBASE]/bin
+INSTALLS += target
+
