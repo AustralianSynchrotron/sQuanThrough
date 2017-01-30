@@ -7,11 +7,15 @@
     <x>0</x>
     <y>0</y>
     <width>1136</width>
-    <height>1204</height>
+    <height>1216</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="squanthrough.qrc">
+    <normaloff>:/icon.png</normaloff>:/icon.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_3">
@@ -53,7 +57,16 @@
              <property name="spacing">
               <number>0</number>
              </property>
-             <property name="margin">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
               <number>0</number>
              </property>
             </layout>
@@ -222,7 +235,16 @@
              <property name="spacing">
               <number>0</number>
              </property>
-             <property name="margin">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
               <number>0</number>
              </property>
             </layout>
@@ -653,7 +675,9 @@
    <header>additional_classes.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="squanthrough.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>scripting</sender>

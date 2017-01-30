@@ -40,3 +40,6 @@ target.files = $$[TARGET]
 target.path = $$[INSTALLBASE]/bin
 INSTALLS += target
 
+RESOURCES += \
+    squanthrough.qrc
+
